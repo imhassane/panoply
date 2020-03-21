@@ -209,9 +209,12 @@ new_collection_1_svc(new_collection_params *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	static collection_t collection;
+
+	collection.id = collections_list.last_inserted;
+	strcpy(collection.name, argp->name);
+
+	collections_list.data[collections_list.last_inserted] = collection;
 
 	return &result;
 }
@@ -221,9 +224,7 @@ total_collections_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	result = collections_list.last_inserted;
 
 	return &result;
 }
@@ -233,9 +234,15 @@ show_collection_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static collection_t  result;
 
-	/*
-	 * insert server code here
-	 */
+	int index = 0, found = 0;
+	while(found == 0 && index < collections_list.last_inserted) {
+		if(*argp == collections_list.data[index].id)
+			found = 1;
+		else
+			index++;
+	}
+
+	if(found == 1) result = collections_list.data[index];
 
 	return &result;
 }
@@ -245,10 +252,15 @@ set_clothing_collecton_1_svc(set_clothing_collection_params *argp, struct svc_re
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	static cloth_t * cloth;
+	static collection_t * collection;
+	static
 
+	cloth = &clothes_list.data[argp->clothing_id];
+	collection = &collections_list.data[argp->collection_id];
+
+	cloth->collection = collection;
+	result = 0;
 	return &result;
 }
 
@@ -269,9 +281,7 @@ total_clothings_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	result = clothes_list.last_inserted;
 
 	return &result;
 }
