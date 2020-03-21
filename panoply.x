@@ -66,19 +66,19 @@ struct member_t {
 /* Une collection */
 struct collection_t {
   int id;
-  char * name;
+  char name[50];
 };
 
 /* Une occasion */
 struct occasion_t {
   int id;
-  char * name;
+  char name[50];
 };
 
 /* Une marque */
 struct brand_t {
   int id;
-  char * name;
+  char name[50];
 };
 
 /* Un vêtement */
@@ -143,6 +143,27 @@ struct subscriptions_list_t {
 };
 
 /* Définition des paramêtres des fonctions */
+struct new_member_params {
+    char first_name[10];
+    char last_name[50];
+    char user_name[10];
+    char password[32];
+    char address[250];
+};
+
+struct login_member_params {
+  char user_name[10];
+  char password[32];
+};
+
+struct new_collection_params {
+  char name[50];
+};
+
+struct new_clothing_params {
+  char name[50];
+};
+
 struct set_member_subscription_params {
   int member_id;
   int subscription_id;
@@ -157,10 +178,10 @@ program PANOPLYPROG {
   version PANOPLYVERS {
 
     /* Créer un membre */
-    int REGISTER(member_t) = 1;
+    int REGISTER(new_member_params) = 1;
 
     /* Connexion */
-    int LOGIN(member_t) = 2;
+    int LOGIN(login_member_params) = 2;
 
     /* Nombre total d'utilisateurs. */
     int TOTAL_MEMBERS() = 3;
@@ -185,7 +206,7 @@ program PANOPLYPROG {
     int SET_MEMBER_SUBSCRIPTION(set_member_subscription_params) = 9;
 
     /* Nouvelle collection. */
-    int NEW_COLLECTION(collection_t) = 10;
+    int NEW_COLLECTION(new_collection_params) = 10;
 
     /* Nombre de collections */
     int TOTAL_COLLECTIONS() = 11;
@@ -199,7 +220,7 @@ program PANOPLYPROG {
     int SET_CLOTHING_COLLECTON(set_clothing_collection_params) = 13;
 
     /* Nouveau vêtement. */
-    int NEW_CLOTHING(cloth_t) = 14;
+    int NEW_CLOTHING(new_clothing_params) = 14;
 
     /* Nombre total de vêtements. */
     int TOTAL_CLOTHINGS() = 15;
@@ -215,5 +236,8 @@ program PANOPLYPROG {
 
     /* Afficher une location. */
     rental_t SHOW_RENTAL(int) = 19;
+
+    /* Afficher la liste des vêtements */
+    clothes_list_t  LIST_CLOTHES() = 20;
   } = 1;
 } = 0x12345678;

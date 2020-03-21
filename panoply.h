@@ -8,6 +8,8 @@
 
 #include <rpc/rpc.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,19 +75,19 @@ typedef struct member_t member_t;
 
 struct collection_t {
 	int id;
-	char *name;
+	char name[50];
 };
 typedef struct collection_t collection_t;
 
 struct occasion_t {
 	int id;
-	char *name;
+	char name[50];
 };
 typedef struct occasion_t occasion_t;
 
 struct brand_t {
 	int id;
-	char *name;
+	char name[50];
 };
 typedef struct brand_t brand_t;
 
@@ -149,6 +151,31 @@ struct subscriptions_list_t {
 };
 typedef struct subscriptions_list_t subscriptions_list_t;
 
+struct new_member_params {
+	char first_name[10];
+	char last_name[50];
+	char user_name[10];
+	char password[32];
+	char address[250];
+};
+typedef struct new_member_params new_member_params;
+
+struct login_member_params {
+	char user_name[10];
+	char password[32];
+};
+typedef struct login_member_params login_member_params;
+
+struct new_collection_params {
+	char name[50];
+};
+typedef struct new_collection_params new_collection_params;
+
+struct new_clothing_params {
+	char name[50];
+};
+typedef struct new_clothing_params new_clothing_params;
+
 struct set_member_subscription_params {
 	int member_id;
 	int subscription_id;
@@ -161,38 +188,16 @@ struct set_clothing_collection_params {
 };
 typedef struct set_clothing_collection_params set_clothing_collection_params;
 
-// Initialisation des tables.
-collections_list_t collections_list;
-collections_list.last_inserted = 0;
-
-occasions_list_t occasions_list;
-occasions_list.last_inserted = 0;
-
-brands_list_t brands_list;
-brands_list.last_inserted = 0;
-
-clothes_list_t clothes_list;
-clothes_list.last_inserted = 0;
-
-rentals_list_t rentals_list;
-rentals_list.last_inserted = 0;
-
-members_list_t members_list;
-members_list.last_inserted = 0;
-
-subscriptions_list_t subscriptions_list;
-subscriptions_list.last_inserted = 0;
-
 #define PANOPLYPROG 0x12345678
 #define PANOPLYVERS 1
 
 #if defined(__STDC__) || defined(__cplusplus)
 #define REGISTER 1
-extern  int * register_1(member_t *, CLIENT *);
-extern  int * register_1_svc(member_t *, struct svc_req *);
+extern  int * register_1(new_member_params *, CLIENT *);
+extern  int * register_1_svc(new_member_params *, struct svc_req *);
 #define LOGIN 2
-extern  int * login_1(member_t *, CLIENT *);
-extern  int * login_1_svc(member_t *, struct svc_req *);
+extern  int * login_1(login_member_params *, CLIENT *);
+extern  int * login_1_svc(login_member_params *, struct svc_req *);
 #define TOTAL_MEMBERS 3
 extern  int * total_members_1(void *, CLIENT *);
 extern  int * total_members_1_svc(void *, struct svc_req *);
@@ -215,8 +220,8 @@ extern  int * update_subscription_1_svc(subscription_t *, struct svc_req *);
 extern  int * set_member_subscription_1(set_member_subscription_params *, CLIENT *);
 extern  int * set_member_subscription_1_svc(set_member_subscription_params *, struct svc_req *);
 #define NEW_COLLECTION 10
-extern  int * new_collection_1(collection_t *, CLIENT *);
-extern  int * new_collection_1_svc(collection_t *, struct svc_req *);
+extern  int * new_collection_1(new_collection_params *, CLIENT *);
+extern  int * new_collection_1_svc(new_collection_params *, struct svc_req *);
 #define TOTAL_COLLECTIONS 11
 extern  int * total_collections_1(void *, CLIENT *);
 extern  int * total_collections_1_svc(void *, struct svc_req *);
@@ -227,8 +232,8 @@ extern  collection_t * show_collection_1_svc(int *, struct svc_req *);
 extern  int * set_clothing_collecton_1(set_clothing_collection_params *, CLIENT *);
 extern  int * set_clothing_collecton_1_svc(set_clothing_collection_params *, struct svc_req *);
 #define NEW_CLOTHING 14
-extern  int * new_clothing_1(cloth_t *, CLIENT *);
-extern  int * new_clothing_1_svc(cloth_t *, struct svc_req *);
+extern  int * new_clothing_1(new_clothing_params *, CLIENT *);
+extern  int * new_clothing_1_svc(new_clothing_params *, struct svc_req *);
 #define TOTAL_CLOTHINGS 15
 extern  int * total_clothings_1(void *, CLIENT *);
 extern  int * total_clothings_1_svc(void *, struct svc_req *);
@@ -244,6 +249,9 @@ extern  int * total_rents_1_svc(void *, struct svc_req *);
 #define SHOW_RENTAL 19
 extern  rental_t * show_rental_1(int *, CLIENT *);
 extern  rental_t * show_rental_1_svc(int *, struct svc_req *);
+#define LIST_CLOTHES 20
+extern  clothes_list_t * list_clothes_1(void *, CLIENT *);
+extern  clothes_list_t * list_clothes_1_svc(void *, struct svc_req *);
 extern int panoplyprog_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
@@ -304,6 +312,9 @@ extern  int * total_rents_1_svc();
 #define SHOW_RENTAL 19
 extern  rental_t * show_rental_1();
 extern  rental_t * show_rental_1_svc();
+#define LIST_CLOTHES 20
+extern  clothes_list_t * list_clothes_1();
+extern  clothes_list_t * list_clothes_1_svc();
 extern int panoplyprog_1_freeresult ();
 #endif /* K&R C */
 
@@ -331,6 +342,10 @@ extern  bool_t xdr_clothes_list_t (XDR *, clothes_list_t*);
 extern  bool_t xdr_rentals_list_t (XDR *, rentals_list_t*);
 extern  bool_t xdr_members_list_t (XDR *, members_list_t*);
 extern  bool_t xdr_subscriptions_list_t (XDR *, subscriptions_list_t*);
+extern  bool_t xdr_new_member_params (XDR *, new_member_params*);
+extern  bool_t xdr_login_member_params (XDR *, login_member_params*);
+extern  bool_t xdr_new_collection_params (XDR *, new_collection_params*);
+extern  bool_t xdr_new_clothing_params (XDR *, new_clothing_params*);
 extern  bool_t xdr_set_member_subscription_params (XDR *, set_member_subscription_params*);
 extern  bool_t xdr_set_clothing_collection_params (XDR *, set_clothing_collection_params*);
 
@@ -356,6 +371,10 @@ extern bool_t xdr_clothes_list_t ();
 extern bool_t xdr_rentals_list_t ();
 extern bool_t xdr_members_list_t ();
 extern bool_t xdr_subscriptions_list_t ();
+extern bool_t xdr_new_member_params ();
+extern bool_t xdr_login_member_params ();
+extern bool_t xdr_new_collection_params ();
+extern bool_t xdr_new_clothing_params ();
 extern bool_t xdr_set_member_subscription_params ();
 extern bool_t xdr_set_clothing_collection_params ();
 

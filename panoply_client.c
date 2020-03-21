@@ -12,9 +12,9 @@ panoplyprog_1(char *host)
 {
 	CLIENT *clnt;
 	int  *result_1;
-	member_t  register_1_arg;
+	new_member_params  register_1_arg;
 	int  *result_2;
-	member_t  login_1_arg;
+	login_member_params  login_1_arg;
 	int  *result_3;
 	char *total_members_1_arg;
 	member_t  *result_4;
@@ -30,7 +30,7 @@ panoplyprog_1(char *host)
 	int  *result_9;
 	set_member_subscription_params  set_member_subscription_1_arg;
 	int  *result_10;
-	collection_t  new_collection_1_arg;
+	new_collection_params  new_collection_1_arg;
 	int  *result_11;
 	char *total_collections_1_arg;
 	collection_t  *result_12;
@@ -38,7 +38,7 @@ panoplyprog_1(char *host)
 	int  *result_13;
 	set_clothing_collection_params  set_clothing_collecton_1_arg;
 	int  *result_14;
-	cloth_t  new_clothing_1_arg;
+	new_clothing_params  new_clothing_1_arg;
 	int  *result_15;
 	char *total_clothings_1_arg;
 	cloth_t  *result_16;
@@ -49,6 +49,8 @@ panoplyprog_1(char *host)
 	char *total_rents_1_arg;
 	rental_t  *result_19;
 	int  show_rental_1_arg;
+	clothes_list_t  *result_20;
+	char *list_clothes_1_arg;
 
 #ifndef	DEBUG
 	clnt = clnt_create (host, PANOPLYPROG, PANOPLYVERS, "udp");
@@ -132,6 +134,10 @@ panoplyprog_1(char *host)
 	}
 	result_19 = show_rental_1(&show_rental_1_arg, clnt);
 	if (result_19 == (rental_t *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	result_20 = list_clothes_1((void*)&list_clothes_1_arg, clnt);
+	if (result_20 == (clothes_list_t *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 #ifndef	DEBUG

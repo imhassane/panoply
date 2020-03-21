@@ -7,42 +7,47 @@
 #include "panoply.h"
 
 int *
-register_1_svc(member_t *argp, struct svc_req *rqstp)
+register_1_svc(new_member_params *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	if(members_list.last_inserted == 0) {
-		argp->id = 0;
-		argp->type = 0;
-	}
-	members_list.data[members_list.last_inserted] = *argp;
-	members_list.last_inserted += 1;
+	static member_t member;
 
-	result = 0;
+	strcpy(member.first_name, argp->first_name);
+	strcpy(member.last_name, argp->last_name);
+	strcpy(member.password, argp->password);
+	strcpy(member.address, argp->address);
+
+	member.type = 1;
+	if(members_list.last_inserted == 0)
+		member.type = 0;
+
+	member.id = members_list.last_inserted;
+
+	members_list.data[members_list.last_inserted] = member;
+	members_list.last_inserted++;
+
 	return &result;
 }
 
 int *
-login_1_svc(member_t *argp, struct svc_req *rqstp)
+login_1_svc(login_member_params *argp, struct svc_req *rqstp)
 {
-	static int  result = -1;
+	static int  result;
 
-	/*
-	 * On vérifie que l'utililsateur existe dans la liste des membres.
-	 */
-	 int found = 0, index = 0, valid_username = -1, valid_password = -1;
-	 while(found == 0 && index < members_list.last_inserted) {
-		 	valid_username = strcpy(members_list.data[index].user_name, argp->user_name);
-			valid_password = strcpy(members_list.data[index].password, argp->password);
+	int found = 0, index = 0, valid_username = -1, valid_password = -1;
+	while(found == 0 && index < members_list.last_inserted) {
+	   valid_username = strcmp(members_list.data[index].user_name, argp->user_name);
+	   valid_password = strcmp(members_list.data[index].password, argp->password);
 
-			if(valid_username == 0 && valid_password == 0)
-				found = 1;
-			else
-				index++;
-	 }
+	   if(valid_username == 0 && valid_password == 0)
+	     found = 1;
+	   else
+	     index++;
+	}
 
-	 // Si l'utilisateur est trouvé, on retourne son identifiant.
-	 if(found == 1) result = members_list.data[index].id;
+	// Si l'utilisateur est trouvé, on retourne son identifiant.
+	if(found == 1) result = members_list.data[index].id;
 
 	return &result;
 }
@@ -51,7 +56,9 @@ int *
 total_members_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static int  result;
+
 	result = members_list.last_inserted;
+
 	return &result;
 }
 
@@ -62,10 +69,10 @@ show_member_1_svc(int *argp, struct svc_req *rqstp)
 
 	int found = 0, index = 0;
 	while(found == 0 && index < members_list.last_inserted) {
-		if(members_list.data[index].id == *argp)
-			found = 1;
-		else
-			index++;
+	  if(members_list.data[index].id == *argp)
+	    found = 1;
+	  else
+	    index++;
 	}
 
 	if(found == 1) result = members_list.data[index];
@@ -78,9 +85,8 @@ new_subscription_1_svc(subscription_t *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	subscriptions_list.data[subscriptions_list.last_inserted] = *argp;
+	subscriptions_list.last_inserted++;
 
 	return &result;
 }
@@ -90,9 +96,7 @@ total_subscriptions_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	result = subscrptions_list.last_inserted;
 
 	return &result;
 }
@@ -102,9 +106,15 @@ show_subscription_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static subscription_t  result;
 
-	/*
-	 * insert server code here
-	 */
+	int found = 0, index = 0;
+	while(found == 0 && index < subscription_list.last_inserted) {
+	  if(subscription_list.data[index].id == *argp)
+	    found = 1;
+	  else
+	    index++;
+	}
+
+	if(found == 1) result = subscription_list.data[index];
 
 	return &result;
 }
@@ -126,15 +136,76 @@ set_member_subscription_1_svc(set_member_subscription_params *argp, struct svc_r
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	static member_t member;
+	subscription_t * subscription = NULL;
 
+	int user_found = 0, index = 0;
+	while(user_found == 0 && index < members_list.last_inserted) {
+		if(members_list.data[index].id == argp->member_id) {
+			user_found = 1;
+		}
+
+		if(user_found == 1)
+			member = members_list.data[index];
+		else
+			index++;
+	}
+
+	subscription = &subscription_list.data[argp->subscription_id];
+	if(subscription != NULL) {
+		member.subscription.is_valid = 1;
+		member.subscription.subscription = subscription;
+
+		time_t time = time(NULL);
+		struct tm * infos = localtime(&time);
+
+		date_t start_date;
+		date_t end_date;
+
+		start_date.day = infos->tm_mday;
+		start_date.month = infos->tm_mon;
+		start_date.year = info->tm_year;
+
+	 	end_date.day = infos->tm_mday;
+		end_date.month = (1 + infos->tm_mon) % 12;
+		end_date.year = info->tm_year;
+
+		member.subscription.first_month.total_credits = subscription->credits;
+		member.subscription.first_month.current_usage = 0;
+		member.subscription.first_month.start_date = start_date;
+		member.subscription.first_month.end_date = end_date;
+
+		start_date.day = infos->tm_mday;
+		start_date.month = end_date.month;
+		start_date.year = info->tm_year;
+
+	 	end_date.day = infos->tm_mday;
+		end_date.month = (2 + infos->tm_mon) % 12;
+		end_date.year = info->tm_year;
+
+		member.subscription.second_month.total_credits = subscription->credits;
+		member.subscription.second_month.current_usage = 0;
+		member.subscription.second_month.start_date = start_date;
+		member.subscription.second_month.end_date = end_date;
+
+		start_date.day = infos->tm_mday;
+		start_date.month = end_date.month;
+		start_date.year = info->tm_year;
+
+	 	end_date.day = infos->tm_mday;
+		end_date.month = (3 + infos->tm_mon) % 12;
+		end_date.year = info->tm_year;
+
+		member.subscription.third_month.total_credits = subscription->credits;
+		member.subscription.third_month.current_usage = 0;
+		member.subscription.third_month.start_date = start_date;
+		member.subscription.third_month.end_date = end_date;
+	}
 	return &result;
 }
 
 int *
-new_collection_1_svc(collection_t *argp, struct svc_req *rqstp)
+new_collection_1_svc(new_collection_params *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
@@ -182,7 +253,7 @@ set_clothing_collecton_1_svc(set_clothing_collection_params *argp, struct svc_re
 }
 
 int *
-new_clothing_1_svc(cloth_t *argp, struct svc_req *rqstp)
+new_clothing_1_svc(new_clothing_params *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
@@ -234,9 +305,7 @@ total_rents_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	result = rentals_list.last_inserted;
 
 	return &result;
 }
@@ -249,6 +318,16 @@ show_rental_1_svc(int *argp, struct svc_req *rqstp)
 	/*
 	 * insert server code here
 	 */
+
+	return &result;
+}
+
+clothes_list_t *
+list_clothes_1_svc(void *argp, struct svc_req *rqstp)
+{
+	static clothes_list_t  result;
+
+	result = clothes_list;
 
 	return &result;
 }
