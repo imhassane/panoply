@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+*_svc.c
+*_xdr.c
+*clnt.c
+panoply_client
+panoply_server
