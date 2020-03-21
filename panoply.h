@@ -7,7 +7,7 @@
 #define _PANOPLY_H_RPCGEN
 
 #include <rpc/rpc.h>
-
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -160,6 +160,28 @@ struct set_clothing_collection_params {
 	int collection_id;
 };
 typedef struct set_clothing_collection_params set_clothing_collection_params;
+
+// Initialisation des tables.
+collections_list_t collections_list;
+collections_list.last_inserted = 0;
+
+occasions_list_t occasions_list;
+occasions_list.last_inserted = 0;
+
+brands_list_t brands_list;
+brands_list.last_inserted = 0;
+
+clothes_list_t clothes_list;
+clothes_list.last_inserted = 0;
+
+rentals_list_t rentals_list;
+rentals_list.last_inserted = 0;
+
+members_list_t members_list;
+members_list.last_inserted = 0;
+
+subscriptions_list_t subscriptions_list;
+subscriptions_list.last_inserted = 0;
 
 #define PANOPLYPROG 0x12345678
 #define PANOPLYVERS 1

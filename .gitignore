@@ -50,7 +50,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-
+Makefile
 *_svc.c
 *_xdr.c
 *clnt.c
