@@ -46,3 +46,10 @@ while(found == 0 && index < members_list.last_inserted) {
 }
 
 if(found == 1) result = members_list.data[index];
+
+struct new_clothing_params {
+  char name[50];
+  int price;
+  int credits;
+  int stock;
+};

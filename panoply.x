@@ -162,6 +162,9 @@ struct new_collection_params {
 
 struct new_clothing_params {
   char name[50];
+  int price;
+  int credits;
+  int stock;
 };
 
 struct set_member_subscription_params {

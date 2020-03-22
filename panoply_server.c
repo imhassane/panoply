@@ -284,10 +284,18 @@ new_clothing_1_svc(new_clothing_params *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	/*
-	 * insert server code here
-	 */
+	static cloth_t cloth;
 
+	strcpy(cloth.name, argp->name);
+	cloth.price = argp->price;
+	cloth.credits = argp->credits;
+	cloth.stock = argp->stock;
+	cloth.id = clothes_list.last_inserted;
+
+	clothes_list.data[clothes_list.last_inserted] = cloth;
+	clothes_list.last_inserted++;
+
+	result = 0;
 	return &result;
 }
 
@@ -306,9 +314,14 @@ show_clothing_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static cloth_t  result;
 
-	/*
-	 * insert server code here
-	 */
+	int found = 0, index = 0;
+	while(found == 0 && index < clothes_list.last_inserted) {
+		if(clothes_list.data[index].id == *argp)
+			found = 1;
+		else
+			index++;
+	}
+	if(found == 1) result = clothes_list.data[index];
 
 	return &result;
 }
@@ -317,10 +330,33 @@ int *
 rent_clothing_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static int  result;
+	struct rental_t rental;
+	static cloth_t * cloth;
 
-	/*
-	 * insert server code here
-	 */
+	result = -1;
+
+	// On récupère le vêtement à louer.
+	int found = 0, index = 0;
+	while(found == 0 && index < clothes_list.last_inserted) {
+		if(clothes_list.data[index].id == *argp)
+			found = 1;
+		else
+			index++;
+	}
+
+	if(found == 1) {
+		cloth = &clothes_list.data[index];
+		if(cloth != NULL) {
+				rental.cloth = cloth;
+				rental.rental_state = 0;
+				rentals_list.data[rentals_list.last_inserted] = rental;
+				rentals_list.last_inserted++;
+
+				result = 0;
+		} else {
+			result = -1;
+		}
+	}
 
 	return &result;
 }

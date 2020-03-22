@@ -171,6 +171,9 @@ typedef struct new_collection_params new_collection_params;
 
 struct new_clothing_params {
 	char name[50];
+	int price;
+	int credits;
+	int stock;
 };
 typedef struct new_clothing_params new_clothing_params;
 
