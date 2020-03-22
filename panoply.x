@@ -170,7 +170,7 @@ struct set_member_subscription_params {
 };
 
 struct set_clothing_collection_params {
-  int member_id;
+  int clothing_id;
   int collection_id;
 };
 

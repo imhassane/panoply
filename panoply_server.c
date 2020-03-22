@@ -3,8 +3,24 @@
  * These are only templates and you can use them
  * as a guideline for developing your own functions.
  */
-
+#include <string.h>
+#include <time.h>
 #include "panoply.h"
+
+// Initialisation des tables.
+static collections_list_t collections_list;
+
+static occasions_list_t occasions_list;
+
+static brands_list_t brands_list;
+
+static clothes_list_t clothes_list;
+
+static rentals_list_t rentals_list;
+
+static members_list_t members_list;
+
+static subscriptions_list_t subscriptions_list;
 
 int *
 register_1_svc(new_member_params *argp, struct svc_req *rqstp)
@@ -96,7 +112,7 @@ total_subscriptions_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static int  result;
 
-	result = subscrptions_list.last_inserted;
+	result = subscriptions_list.last_inserted;
 
 	return &result;
 }
@@ -107,14 +123,14 @@ show_subscription_1_svc(int *argp, struct svc_req *rqstp)
 	static subscription_t  result;
 
 	int found = 0, index = 0;
-	while(found == 0 && index < subscription_list.last_inserted) {
-	  if(subscription_list.data[index].id == *argp)
+	while(found == 0 && index < subscriptions_list.last_inserted) {
+	  if((subscriptions_list.data[index]).type == *argp)
 	    found = 1;
 	  else
 	    index++;
 	}
 
-	if(found == 1) result = subscription_list.data[index];
+	if(found == 1) result = (subscriptions_list.data[index]);
 
 	return &result;
 }
@@ -151,24 +167,24 @@ set_member_subscription_1_svc(set_member_subscription_params *argp, struct svc_r
 			index++;
 	}
 
-	subscription = &subscription_list.data[argp->subscription_id];
+	subscription = &subscriptions_list.data[argp->subscription_id];
 	if(subscription != NULL) {
 		member.subscription.is_valid = 1;
 		member.subscription.subscription = subscription;
 
-		time_t time = time(NULL);
-		struct tm * infos = localtime(&time);
+		time_t _time = time(NULL);
+		struct tm * infos = localtime(&_time);
 
 		date_t start_date;
 		date_t end_date;
 
 		start_date.day = infos->tm_mday;
 		start_date.month = infos->tm_mon;
-		start_date.year = info->tm_year;
+		start_date.year = infos->tm_year;
 
 	 	end_date.day = infos->tm_mday;
 		end_date.month = (1 + infos->tm_mon) % 12;
-		end_date.year = info->tm_year;
+		end_date.year = infos->tm_year;
 
 		member.subscription.first_month.total_credits = subscription->credits;
 		member.subscription.first_month.current_usage = 0;
@@ -177,11 +193,11 @@ set_member_subscription_1_svc(set_member_subscription_params *argp, struct svc_r
 
 		start_date.day = infos->tm_mday;
 		start_date.month = end_date.month;
-		start_date.year = info->tm_year;
+		start_date.year = infos->tm_year;
 
 	 	end_date.day = infos->tm_mday;
 		end_date.month = (2 + infos->tm_mon) % 12;
-		end_date.year = info->tm_year;
+		end_date.year = infos->tm_year;
 
 		member.subscription.second_month.total_credits = subscription->credits;
 		member.subscription.second_month.current_usage = 0;
@@ -190,11 +206,11 @@ set_member_subscription_1_svc(set_member_subscription_params *argp, struct svc_r
 
 		start_date.day = infos->tm_mday;
 		start_date.month = end_date.month;
-		start_date.year = info->tm_year;
+		start_date.year = infos->tm_year;
 
 	 	end_date.day = infos->tm_mday;
 		end_date.month = (3 + infos->tm_mon) % 12;
-		end_date.year = info->tm_year;
+		end_date.year = infos->tm_year;
 
 		member.subscription.third_month.total_credits = subscription->credits;
 		member.subscription.third_month.current_usage = 0;
@@ -252,14 +268,13 @@ set_clothing_collecton_1_svc(set_clothing_collection_params *argp, struct svc_re
 {
 	static int  result;
 
-	static cloth_t * cloth;
+	static cloth_t * my_cloth;
 	static collection_t * collection;
-	static
 
-	cloth = &clothes_list.data[argp->clothing_id];
+	my_cloth = &(clothes_list.data[argp->clothing_id]);
 	collection = &collections_list.data[argp->collection_id];
 
-	cloth->collection = collection;
+	my_cloth->collection = collection;
 	result = 0;
 	return &result;
 }

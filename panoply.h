@@ -7,9 +7,7 @@
 #define _PANOPLY_H_RPCGEN
 
 #include <rpc/rpc.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -183,7 +181,7 @@ struct set_member_subscription_params {
 typedef struct set_member_subscription_params set_member_subscription_params;
 
 struct set_clothing_collection_params {
-	int member_id;
+	int clothing_id;
 	int collection_id;
 };
 typedef struct set_clothing_collection_params set_clothing_collection_params;
