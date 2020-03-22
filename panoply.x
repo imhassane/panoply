@@ -96,6 +96,7 @@ struct cloth_t {
 
 /* Une location */
 struct rental_t {
+  int id;
   cloth_t * cloth;
   RENTAL_STATE rental_state;
 };

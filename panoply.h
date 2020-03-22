@@ -102,6 +102,7 @@ struct cloth_t {
 typedef struct cloth_t cloth_t;
 
 struct rental_t {
+	int id;
 	cloth_t *cloth;
 	RENTAL_STATE rental_state;
 };

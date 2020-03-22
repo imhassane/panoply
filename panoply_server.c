@@ -378,7 +378,7 @@ show_rental_1_svc(int *argp, struct svc_req *rqstp)
 
 	int found = 0, index = 0;
 	while(found == 0 && index < rentals_list.last_inserted) {
-		if(rentals_list.data[index].id == *argp)
+		if((rentals_list.data[index]).id == *argp)
 			found = 1;
 		else
 			index++;
