@@ -6,13 +6,16 @@
 
 #include "panoply.h"
 
+#include <stdio.h>
+#include <string.h>
+
 
 void
 panoplyprog_1(char *host)
 {
 	CLIENT *clnt;
 	int  *result_1;
-	new_member_params  register_1_arg;
+	new_member_params  register_1_arg[2];
 	int  *result_2;
 	login_member_params  login_1_arg;
 	int  *result_3;
@@ -60,18 +63,40 @@ panoplyprog_1(char *host)
 	}
 #endif	/* DEBUG */
 
-	result_1 = register_1(&register_1_arg, clnt);
-	if (result_1 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
+	// Création de compte.
+	puts("##### CREATION DES COMPTES #####");
+	strcpy(register_1_arg[0].first_name, "Hassane");
+	strcpy(register_1_arg[0].last_name, "Sow");
+	strcpy(register_1_arg[0].user_name, "admin");
+	strcpy(register_1_arg[0].password, "admin");
+
+	strcpy(register_1_arg[1].first_name, "Jean");
+	strcpy(register_1_arg[1].last_name, "Dumas");
+	strcpy(register_1_arg[1].user_name, "client");
+	strcpy(register_1_arg[1].password, "client");
+
+	for(int i = 0; i < 2; i++) {
+		result_1 = register_1(&register_1_arg[i], clnt);
+		if (result_1 == (int *) NULL) {
+			clnt_perror (clnt, "call failed");
+		}
 	}
+
+	puts("##### CONNEXION EN TANT QU'ADMINISTRATEUR #####");
+	strcpy(login_1_arg.user_name, "admin");
+	strcpy(login_1_arg.password, "admin");
 	result_2 = login_1(&login_1_arg, clnt);
 	if (result_2 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
+
+	puts("##### NOMBRE TOTAL DE COMPTE #####");
 	result_3 = total_members_1((void*)&total_members_1_arg, clnt);
 	if (result_3 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
+	printf("Le nombre total de comptes est: %d\n", result_3);
+
 	result_4 = show_member_1(&show_member_1_arg, clnt);
 	if (result_4 == (member_t *) NULL) {
 		clnt_perror (clnt, "call failed");
