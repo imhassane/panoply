@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 
+int LOGGED_USER = -1;
 
 void
 panoplyprog_1(char *host)
@@ -23,7 +24,7 @@ panoplyprog_1(char *host)
 	member_t  *result_4;
 	int  show_member_1_arg;
 	int  *result_5;
-	subscription_t  new_subscription_1_arg;
+	subscription_t new_subscription_1_arg[4];
 	int  *result_6;
 	char *total_subscriptions_1_arg;
 	subscription_t  *result_7;
@@ -33,15 +34,15 @@ panoplyprog_1(char *host)
 	int  *result_9;
 	set_member_subscription_params  set_member_subscription_1_arg;
 	int  *result_10;
-	new_collection_params  new_collection_1_arg;
+	new_collection_params  new_collection_1_arg[5];
 	int  *result_11;
 	char *total_collections_1_arg;
 	collection_t  *result_12;
 	int  show_collection_1_arg;
 	int  *result_13;
-	set_clothing_collection_params  set_clothing_collecton_1_arg;
+	set_clothing_collection_params  set_clothing_collecton_1_arg[5];
 	int  *result_14;
-	new_clothing_params  new_clothing_1_arg;
+	new_clothing_params  new_clothing_1_arg[5];
 	int  *result_15;
 	char *total_clothings_1_arg;
 	cloth_t  *result_16;
@@ -63,56 +64,260 @@ panoplyprog_1(char *host)
 	}
 #endif	/* DEBUG */
 
-	// Création de compte.
-	puts("##### CREATION DES COMPTES #####");
-	strcpy(register_1_arg[0].first_name, "Hassane");
-	strcpy(register_1_arg[0].last_name, "Sow");
-	strcpy(register_1_arg[0].user_name, "admin");
-	strcpy(register_1_arg[0].password, "admin");
+	puts(">> Creation des collections");
+	new_collection_params collection_params;
+	strcpy(collection_params.name, "Pantalons");
+	new_collection_1_arg[0] = collection_params;
+	strcpy(collection_params.name, "Vestes");
+	new_collection_1_arg[1] = collection_params;
+	strcpy(collection_params.name, "Polos");
+	new_collection_1_arg[2] = collection_params;
+	strcpy(collection_params.name, "Manteaux");
+	new_collection_1_arg[3] = collection_params;
+	strcpy(collection_params.name, "Sweats");
+	new_collection_1_arg[4] = collection_params;
 
-	strcpy(register_1_arg[1].first_name, "Jean");
-	strcpy(register_1_arg[1].last_name, "Dumas");
-	strcpy(register_1_arg[1].user_name, "client");
-	strcpy(register_1_arg[1].password, "client");
+	for(int i = 0; i < 5; i++) {
+		result_10 = new_collection_1(&new_collection_1_arg[i], clnt);
+		if (result_10 == (int *) NULL) {
+			clnt_perror (clnt, "new collection call failed");
+		}
+	}
+	result_11 = total_collections_1((void*)&total_collections_1_arg, clnt);
+	if (result_11 == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	printf("\t\t%d collections crees\n\n", *result_11);
 
-	for(int i = 0; i < 2; i++) {
-		result_1 = register_1(&register_1_arg[i], clnt);
-		if (result_1 == (int *) NULL) {
+	puts(">> Creation des vetements");
+	new_clothing_params clothing_params;
+
+	strcpy(clothing_params.name, "Jeans HM");
+	clothing_params.credits = 1;	clothing_params.price = 15; clothing_params.stock = 5;
+	new_clothing_1_arg[0] = clothing_params;
+
+	strcpy(clothing_params.name, "Polo ADIDAS");
+	clothing_params.credits = 1;	clothing_params.price = 25; clothing_params.stock = 10;
+	new_clothing_1_arg[1] = clothing_params;
+
+	strcpy(clothing_params.name, "Pantalon NIKE");
+	clothing_params.credits = 1;	clothing_params.price = 55; clothing_params.stock = 3;
+	new_clothing_1_arg[2] = clothing_params;
+
+	strcpy(clothing_params.name, "Manteau VINYL");
+	clothing_params.credits = 1;	clothing_params.price = 13; clothing_params.stock = 20;
+	new_clothing_1_arg[3] = clothing_params;
+
+	strcpy(clothing_params.name, "Sweat APOLLO");
+	clothing_params.credits = 1;	clothing_params.price = 20; clothing_params.stock = 12;
+	new_clothing_1_arg[4] = clothing_params;
+
+	for(int i=0; i < 5; i++) {
+		result_14 = new_clothing_1(&new_clothing_1_arg[i], clnt);
+		if (result_14 == (int *) NULL) {
+			clnt_perror (clnt, "new clothing call failed");
+		}
+	}
+	result_15 = total_clothings_1((void*)&total_clothings_1_arg, clnt);
+	if (result_15 == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	printf("\t\t%d vetements crees\n\n", *result_15);
+
+	set_clothing_collection_params clothing_collection;
+	clothing_collection.clothing_id = 1;	clothing_collection.collection_id = 1;
+	set_clothing_collecton_1_arg[0] = clothing_collection;
+
+	clothing_collection.clothing_id = 2;	clothing_collection.collection_id = 2;
+	set_clothing_collecton_1_arg[1] = clothing_collection;
+
+	clothing_collection.clothing_id = 3;	clothing_collection.collection_id = 3;
+	set_clothing_collecton_1_arg[2] = clothing_collection;
+
+	clothing_collection.clothing_id = 4;	clothing_collection.collection_id = 4;
+	set_clothing_collecton_1_arg[3] = clothing_collection;
+
+	clothing_collection.clothing_id = 5;	clothing_collection.collection_id = 5;
+	set_clothing_collecton_1_arg[4] = clothing_collection;
+
+	for(int i = 0; i < 5; i++) {
+		result_13 = set_clothing_collecton_1(&set_clothing_collecton_1_arg[i], clnt);
+		if (result_13 == (int *) NULL) {
 			clnt_perror (clnt, "call failed");
 		}
 	}
+	puts("\t\t5 collections associees\n");
 
-	puts("##### CONNEXION EN TANT QU'ADMINISTRATEUR #####");
-	strcpy(login_1_arg.user_name, "admin");
-	strcpy(login_1_arg.password, "admin");
-	result_2 = login_1(&login_1_arg, clnt);
-	if (result_2 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
+	puts(">> Creation des types d'abonnements");
+	subscription_t first, second, third, fourth;
+
+	first.type = 0; 	first.credits = 1; 	first.price = 69;
+	second.type = 1; 	second.credits = 3; second.price = 159;
+	third.type = 2; 	third.credits = 5; 	third.price = 229;
+	fourth.type = 3; 	fourth.credits = 8; fourth.price = 319;
+
+	new_subscription_1_arg[0] = first;
+	new_subscription_1_arg[1] = second;
+	new_subscription_1_arg[2] = third;
+	new_subscription_1_arg[3] = fourth;
+
+	for(int i = 0; i < 4; i++) {
+		result_5 = new_subscription_1(&new_subscription_1_arg[i], clnt);
+		if (result_5 == (int *) NULL) {
+			clnt_perror (clnt, "new subscription call failed");
+		}
 	}
 
-	puts("##### NOMBRE TOTAL DE COMPTE #####");
-	result_3 = total_members_1((void*)&total_members_1_arg, clnt);
-	if (result_3 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	printf("Le nombre total de comptes est: %d\n", result_3);
-
-	result_4 = show_member_1(&show_member_1_arg, clnt);
-	if (result_4 == (member_t *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_5 = new_subscription_1(&new_subscription_1_arg, clnt);
-	if (result_5 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
 	result_6 = total_subscriptions_1((void*)&total_subscriptions_1_arg, clnt);
 	if (result_6 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
+	printf("\t\t%d abonnements crees\n\n", *result_6);
+
+	// Création de compte.
+	puts(">> Creation des comptes");
+	strcpy(register_1_arg[0].first_name, 	"Hassane");
+	strcpy(register_1_arg[0].last_name, 	"Sow");
+	strcpy(register_1_arg[0].user_name, 	"admin");
+	strcpy(register_1_arg[0].password, 		"admin");
+	strcpy(register_1_arg[0].address, 		"3 rue Victor Hugo, 29200, Brest");
+
+	strcpy(register_1_arg[1].first_name, 	"Jean");
+	strcpy(register_1_arg[1].last_name, 	"Dumas");
+	strcpy(register_1_arg[1].user_name, 	"client");
+	strcpy(register_1_arg[1].password, 		"client");
+	strcpy(register_1_arg[1].address, 		"10 Boulevard Jea Montaigne, 29200, Brest");
+
+	for(int i = 0; i < 2; i++) {
+		result_1 = register_1(&register_1_arg[i], clnt);
+		if (result_1 == (int *) NULL) {
+			clnt_perror (clnt, "register call failed");
+		}
+	}
+
+	result_3 = total_members_1((void*)&total_members_1_arg, clnt);
+	if (result_3 == (int *) NULL) {
+		clnt_perror (clnt, "total members call failed");
+	}
+	printf("\t\tLe nombre total de comptes cree est: %d\n\n", *result_3);
+
+	puts("##### SCENARIO 1 #####");
+	puts("..... Un client se connecte, affiche ses informations, affiche l'abonnement de son choix");
+	puts("..... Il choisi son abonnement et fait une location");
+	puts("");
+
+	puts(">> Connexion en tant que client");
+	strcpy(login_1_arg.user_name, "client");
+	strcpy(login_1_arg.password, 	"client");
+	result_2 = login_1(&login_1_arg, clnt);
+	if (result_2 == (int *) NULL) {
+		clnt_perror (clnt, "login call failed");
+	}
+	if(*result_2 != -1) {
+		LOGGED_USER = *result_2;
+		puts("\t\tConnexion reussie au serveur\n");
+	}
+
+	puts(">> Informations du membre avec l'identifiant 2");
+	show_member_1_arg = LOGGED_USER;
+	result_4 = show_member_1(&show_member_1_arg, clnt);
+	if (result_4 == (member_t *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	printf("\t\tPrenom: %s\n\t\tNom: %s\n\t\tAdresse: %s\n\n", result_4->first_name, result_4->last_name, result_4->address);
+
+	puts(">> Choix de l'abonnement 2");
+	show_subscription_1_arg = 1;
 	result_7 = show_subscription_1(&show_subscription_1_arg, clnt);
 	if (result_7 == (subscription_t *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
+	printf("\t\tType: %d\tCredits: %d\tPrix: %d\n\n", result_7->type+1, result_7->credits, result_7->price);
+	result_9 = set_member_subscription_1(&set_member_subscription_1_arg, clnt);
+	if (result_9 == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	printf("\t\tabonnement numero %d choisi\n\n", *result_9+1);
+
+	puts(">> Location des vetements");
+	rent_clothing_1_arg = 2;
+	result_17 = rent_clothing_1(&rent_clothing_1_arg, clnt);
+	if (result_17 == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+
+	if(*result_17 == 0) {
+		puts("\t\tlocation reussie\n");
+	}
+
+	puts("##### SCENARIO 2 #####");
+	puts("..... Un administrateur se connecte, affiche les utilisateurs");
+	puts("..... il affiche les abonnements, les collections et les differents types d'abonnement");
+	puts("");
+
+	puts(">> Connexion en tant qu'administrateur");
+	strcpy(login_1_arg.user_name, "admin");
+	strcpy(login_1_arg.password, 	"admin");
+	result_2 = login_1(&login_1_arg, clnt);
+	if (result_2 == (int *) NULL) {
+		clnt_perror (clnt, "login call failed");
+	}
+	if(*result_2 != -1) {
+		LOGGED_USER = *result_2;
+		puts("\t\tConnexion reussie au serveur\n");
+	}
+
+
+		puts(">> Liste de tous les utilisateurs");
+		for(int i = 0; i < 2; i++) {
+			show_member_1_arg = i;
+
+			result_4 = show_member_1(&show_member_1_arg, clnt);
+			if (result_4 == (member_t *) NULL) {
+				clnt_perror (clnt, "call failed");
+			}
+			printf("\t\tID: %d\n\t\tPrenom: %s\n\t\tNom: %s\n\t\tAdresse: %s\n\n", result_4->id, result_4->first_name, result_4->last_name, result_4->address);
+			puts("");
+		}
+
+		puts(">> Liste de tous les abonnements");
+		for(int i = 0; i < 4; i++) {
+			show_subscription_1_arg = i;
+			result_7 = show_subscription_1(&show_subscription_1_arg, clnt);
+			if (result_7 == (subscription_t *) NULL) {
+				clnt_perror (clnt, "call failed");
+			}
+			printf("\t\tType: %d\tCredits: %d\tPrix: %d\n\n", result_7->type+1, result_7->credits, result_7->price);
+			puts("");
+		}
+
+		puts(">> Liste des collections");
+		for(int i = 0; i < 5; i++) {
+			show_collection_1_arg = i;
+			result_12 = show_collection_1(&show_collection_1_arg, clnt);
+			if (result_12 == (collection_t *) NULL) {
+				clnt_perror (clnt, "call failed");
+			}
+			printf("\t\tID: %d\tNom de la collection: %s\n", result_12->id, result_12->name);
+		}
+		puts("");
+
+		puts(">> Listes des locations");
+		for(int i = 0; i < 1; i++) {
+			show_rental_1_arg = i;
+			result_19 = show_rental_1(&show_rental_1_arg, clnt);
+			if (result_19 == (rental_t *) NULL) {
+				clnt_perror (clnt, "call failed");
+			}
+			if(result_19->rental_state == 0)
+				printf("\t\tID: %d\tEtat: en location\n", result_19->id);
+			else
+				printf("\t\tID: %d\tEtat: rendu\n", result_19->id);
+
+			puts("");
+		}
+	/*
+
 	result_8 = update_subscription_1(&update_subscription_1_arg, clnt);
 	if (result_8 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
@@ -121,28 +326,8 @@ panoplyprog_1(char *host)
 	if (result_9 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-	result_10 = new_collection_1(&new_collection_1_arg, clnt);
-	if (result_10 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_11 = total_collections_1((void*)&total_collections_1_arg, clnt);
-	if (result_11 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_12 = show_collection_1(&show_collection_1_arg, clnt);
-	if (result_12 == (collection_t *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
 	result_13 = set_clothing_collecton_1(&set_clothing_collecton_1_arg, clnt);
 	if (result_13 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_14 = new_clothing_1(&new_clothing_1_arg, clnt);
-	if (result_14 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_15 = total_clothings_1((void*)&total_clothings_1_arg, clnt);
-	if (result_15 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 	result_16 = show_clothing_1(&show_clothing_1_arg, clnt);
@@ -161,10 +346,8 @@ panoplyprog_1(char *host)
 	if (result_19 == (rental_t *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-	result_20 = list_clothes_1((void*)&list_clothes_1_arg, clnt);
-	if (result_20 == (clothes_list_t *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
+
+	*/
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */

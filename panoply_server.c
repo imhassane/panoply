@@ -231,6 +231,7 @@ new_collection_1_svc(new_collection_params *argp, struct svc_req *rqstp)
 	strcpy(collection.name, argp->name);
 
 	collections_list.data[collections_list.last_inserted] = collection;
+	collections_list.last_inserted++;
 
 	return &result;
 }
@@ -393,8 +394,6 @@ clothes_list_t *
 list_clothes_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static clothes_list_t  result;
-
-	result = clothes_list;
 
 	return &result;
 }
